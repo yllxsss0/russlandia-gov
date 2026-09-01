@@ -3,11 +3,11 @@ import { useRouter } from 'next/router';
 
 const categories = [
   {
-    title: '📝 Электронные заявления',
+    title: '🏛️ Гражданство',
     color: '#4CAF50',
     items: [
-      { id: 'hiring', title: 'Трудоустройство', description: 'Подать заявку на вступление в LSPD', icon: '📝' },
-      { id: 'transfer-to-lspd', title: 'Перевод в LSPD', description: 'Перевод из другой организации', icon: '🏛️' },
+      { id: 'hiring', title: 'Получение гражданства', description: 'Подать заявку на получение гражданства НЕЗАВИСИМОГО государства Руссландия', icon: '📝' },
+      { id: 'transfer-to-lspd', title: 'Избавиться от гражданства', description: 'Подать заявку на становление помойным выблядком тупорылым', icon: '💩' },
     ]
   },
   {
@@ -66,7 +66,7 @@ export default function Dashboard() {
   return (
     <div style={{ minHeight:'100vh',background:'linear-gradient(135deg,#0a0a1a 0%,#1a1a3e 100%)',padding:'30px',color:'white' }}>
       <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',maxWidth:'1200px',margin:'0 auto 30px',padding:'20px',background:'rgba(255,255,255,0.03)',borderRadius:'16px',border:'1px solid rgba(255,255,255,0.08)' }}>
-        <h1 style={{ fontSize:'28px',margin:0 }}>🏛️ LSPD Forms</h1>
+        <h1 style={{ fontSize:'28px',margin:0 }}>🏛️ Russlandia Forms</h1>
         <div style={{ display:'flex',alignItems:'center',gap:'12px',color:'#8b8ba7' }}>
           <img 
             src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`} 
