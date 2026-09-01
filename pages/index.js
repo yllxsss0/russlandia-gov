@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 const DISCORD_CLIENT_ID = '1544378930998411408';
-const DISCORD_REDIRECT_URI = 'https://lalala123.vercel.app/api/auth';
+const DISCORD_REDIRECT_URI = 'https://russlandia-gov.vercel.app/api/auth';
 
 export default function Home() {
   const router = useRouter();
