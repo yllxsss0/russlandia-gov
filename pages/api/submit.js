@@ -5,6 +5,11 @@ export default async function handler(req, res) {
   }
 
   try {
+
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ error: 'Не авторизован' });
+    const user = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    
     const { type, department, ...formData } = req.body;
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 
