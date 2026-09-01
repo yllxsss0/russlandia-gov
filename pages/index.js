@@ -69,10 +69,10 @@ export default function Home() {
       }}>
         <div style={{ fontSize: '64px', marginBottom: '20px' }}>🔰</div>
         <h1 style={{ color: 'white', fontSize: '32px', marginBottom: '10px', fontWeight: 700 }}>
-          Majestic LSPD 
+          Russlandia GOV
         </h1>
         <p style={{ color: '#8b8ba7', marginBottom: '35px', fontSize: '16px' }}>
-          Система подачи заявок LSPD
+          Единый официальный портал Русландии 
         </p>
         
         {error && (
