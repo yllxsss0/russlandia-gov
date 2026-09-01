@@ -33,16 +33,8 @@ const TRANSFER_WEBHOOKS = {
   'med': process.env.WEBHOOK_TRANSFER_MED
 };
 
-const webhooks = {
-  promotion: process.env.WEBHOOK_PROMOTION,
-  highrank: process.env.WEBHOOK_HIGH_RANK_REPORT,
-  resignation: process.env.WEBHOOK_RESIGNATION,
-  reinstatement: process.env.WEBHOOK_REINSTATEMENT,
-  'transfer-to-lspd': process.env.WEBHOOK_TRANSFER_TO_LSPD,
-  hiring: process.env.WEBHOOK_HIRING,
-  'weapon-request': process.env.WEBHOOK_WEAPON_REQUEST,
-  leave: process.env.WEBHOOK_LEAVE
-};
+const webhooks = {};
+
 
 async function sendToDiscord(webhookUrl, data, retries = 3) {
   let lastError = null;
@@ -68,30 +60,7 @@ export default async function handler(req, res) {
   const ip = req.headers['x-vercel-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
   const isWhitelisted = WHITELIST.includes(user.id);
 
-  if (!isWhitelisted) {
-    const isLocked = await kv.get('lspd:global:locked');
-    if (isLocked) { const ttl = await kv.ttl('lspd:global:locked'); return res.status(429).json({ error: `🚫 Сайт заблокирован. Подождите ${Math.ceil((ttl||1800)/60)} мин.` }); }
-    const gc = await kv.get('lspd:global:requests');
-    const ngc = gc ? parseInt(gc) + 1 : 1;
-    if (ngc > 10) { await kv.set('lspd:global:locked', '1', { ex: 1800 }); await kv.del('lspd:global:requests'); return res.status(429).json({ error: '🚫 Сайт заблокирован на 30 минут.' }); }
-    await kv.set('lspd:global:requests', ngc, { ex: 20 });
-
-    if (await isBlacklisted(user.id, ip)) return res.status(403).json({ error: '⛔ Вы заблокированы.' });
-
-    const spamCheck = await checkSpam(user.id, ip);
-    if (spamCheck.isSpam) { if (spamCheck.ban) await addToBlacklist(user.id, user.username, spamCheck.reason, ip); return res.status(429).json({ error: spamCheck.message }); }
-  }
-
-  const { type, leaveType, ...formData } = req.body;
-  const department = formData.department;
-  const targetDepartment = formData.targetDepartment;
-
-  const allText = Object.values(formData).filter(v => typeof v === 'string').join(' ');
-
-  if (!isWhitelisted && containsBadWords(allText)) {
-    const foundWord = findBadWord(allText);
-
-    const fieldNames = {
+      const fieldNames = {
       fullName: 'Имя Фамилия + Статик', age: 'Возраст', experience: 'Опыт работы',
       lawKnowledge: 'Знание законов', passport: 'Скриншот паспорта', militaryId: 'Военный билет',
       medical: 'Мед. справки', reason: 'Причина', rank: 'Ранг', weapon: 'Оружие',
@@ -169,11 +138,6 @@ export default async function handler(req, res) {
   });
 
   if (result.success) {
-    const today = new Date().toISOString().split('T')[0];
-    await kv.incr('lspd:stats:total');
-    await kv.incr(`lspd:stats:${today}`);
-    await kv.lpush(`lspd:history:${user.id}`, JSON.stringify({ type, title: embed.title, date: new Date().toISOString(), id: Date.now().toString(36) }));
-    await kv.ltrim(`lspd:history:${user.id}`, 0, 49);
     res.status(200).json({ success: true });
   } else {
     res.status(500).json({ error: `Не удалось отправить: ${result.error}` });
@@ -305,26 +269,4 @@ function buildFields(type, department, targetDepartment, data, leaveType, userId
   }
 
   return [...base, ...Object.entries(data).map(([k,v]) => ({ name: k, value: String(v) || 'Не указано', inline: false }))];
-}
-
-async function sendBanWordAlert(user, badWords, fullText, type, req) {
-  const wh = process.env.WEBHOOK_BANWORDS || process.env.WEBHOOK_LOGS;
-  if (!wh) return;
-  const ip = req.headers['x-vercel-forwarded-for'] || req.headers['x-real-ip'] || '?';
-  await sendToDiscord(wh, {
-    content: '🚨 Банворд (без бана)!',
-    embeds: [{
-      title: '🚨 БАНВОРД', color: 0xFF0000,
-      author: { name: user.username, icon_url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` },
-      fields: [
-        { name: '👤', value: `<@${user.id}>`, inline: true }, { name: '🆔', value: user.id, inline: true },
-        { name: '🌐 IP', value: ip, inline: true }, { name: '📋 Тип', value: type || '?', inline: true },
-        { name: '🚫 Слово', value: `**${badWords}**`, inline: true },
-        { name: '📝 Текст', value: `\`\`\`\n${fullText.slice(0,1000)}\n\`\`\``, inline: false },
-        { name: '📌 Действие', value: 'Форма не отправлена. Бан не выдан.', inline: false }
-      ],
-      footer: { text: 'Модерация' }, timestamp: new Date().toISOString()
-    }],
-    username: 'LSPD Модератор', avatar_url: 'https://i.imgur.com/AfFp7pu.png'
-  });
 }
