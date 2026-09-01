@@ -12,31 +12,43 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Вебхук DISCORD_WEBHOOK_URL не настроен в Vercel!' });
     }
 
-    // Собираем все заполненные поля формы в читаемый текст для Discord
+        // Собираем все заполненные поля формы в читаемый текст для Discord
     const fields = Object.entries(formData)
       .filter(([_, value]) => value) // убираем пустые поля
       .map(([key, value]) => ({
         name: `📌 ${key}`,
         value: String(value).slice(0, 1024),
-        inline: false
+        inline: false // основные поля идут друг под другом
       }));
+
+    // Добавляем в самый конец две inline-колонки, как в оригинале LSPD
+    fields.push({
+      name: '👤 Отправитель',
+      value: `<@${user.id}>`,
+      inline: true
+    });
+
+    fields.push({
+      name: '🆔 Discord ID',
+      value: `\`${user.id}\``,
+      inline: true
+    });
 
     // Формируем красивую карточку для Дискорда
     const embed = {
       title: `🚀 Новая заявка (Тип: ${type || 'Форма'})`,
       color: 0x5865F2, // Фиолетовый цвет Дискорда
-      fields: fields.length > 0 ? fields : [{ name: 'Статус', value: 'Форма отправлена пустой' }],
+      fields: fields, // сюда уже вшиты наши колонки!
       timestamp: new Date().toISOString(),
-      footer: { text: 'Russland Portal • Шуточная Панель' }
+      footer: { text: 'Russlandia Portal • Заявка' }
     };
+
 
     // Отправляем данные на твой вебхук
     const discordResponse = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        username: 'Russland Модератор',
-        avatar_url: 'https://imgur.com',
         embeds: [embed]
       })
     });
