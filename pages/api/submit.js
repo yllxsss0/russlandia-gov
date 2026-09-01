@@ -1,11 +1,3 @@
-import { verifyToken } from '../../lib/discord';
-import { isBlacklisted, addToBlacklist } from '../../lib/blacklist';
-import { containsBadWords, findBadWord, findAllBadWords } from '../../lib/badwords';
-import { checkSpam } from '../../lib/antispam';
-import { kv } from '@vercel/kv';
-
-const WHITELIST = ['200102286473691139'];
-
 const DEPARTMENTS = {
   'af': { name: 'AF', emoji: '✈️', roleId: '1514695692520525834', roleId2: '1541128485089837136', webhook: process.env.WEBHOOK_REPORT_AF },
   'iad': { name: 'IAD', emoji: '⚖️', roleId: '1514608894700159139', roleId2: '1541128640140550194', webhook: process.env.WEBHOOK_REPORT_IAD },
