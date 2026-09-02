@@ -86,7 +86,7 @@ export default function HiringForm() {
       });
 
       if (res.ok) {
-        alert('✅ Заявка на трудоустройство успешно отправлена!');
+        alert('✅ Заявка на гражданства успешно отправлена!');
         router.push('/dashboard');
       } else {
         const error = await res.json();
@@ -119,20 +119,20 @@ export default function HiringForm() {
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Имя Фамилия + Статик * {profile.fullName && <span style={{ color:'#4CAF50',fontSize:'12px' }}>(из профиля)</span>}</label>
+            <label>ФИО * {profile.fullName && <span style={{ color:'#4CAF50',fontSize:'12px' }}>(из профиля)</span>}</label>
             <input 
               type="text" 
               required
               value={formData.fullName}
               onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-              placeholder="Например: Sanya Suspect 270726"
+              placeholder="Например: Назар Перегонов Андреевич"
               disabled={!!profile.fullName}
               className={profile.fullName ? 'disabled-input' : ''}
             />
           </div>
 
           <div className="form-group">
-            <label>Возраст (RP) *</label>
+            <label>Возраст *</label>
             <input 
               type="text" 
               required
