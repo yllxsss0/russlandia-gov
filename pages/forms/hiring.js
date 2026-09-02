@@ -2,14 +2,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 const EXPERIENCE_OPTIONS = [
-  'Нет опыта',
-  'Был в LSCSD',
-  'Был в FIB',
-  'Был в SANG',
-  'Другое'
+  'Нет',
+  'Да'
 ];
 
-const LAW_KNOWLEDGE = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+const LAW_KNOWLEDGE = ['Гетеросексуал', 'Гомосексуал', 'Другое'];
 
 export default function HiringForm() {
   const router = useRouter();
@@ -86,7 +83,7 @@ export default function HiringForm() {
       });
 
       if (res.ok) {
-        alert('✅ Заявка на гражданства успешно отправлена!');
+        alert('✅ Заявка на получение гражданства успешно отправлена!');
         router.push('/dashboard');
       } else {
         const error = await res.json();
@@ -125,7 +122,7 @@ export default function HiringForm() {
               required
               value={formData.fullName}
               onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-              placeholder="Например: Назар Перегонов Андреевич"
+              placeholder="Например: Перегонов Назар Андреевич"
               disabled={!!profile.fullName}
               className={profile.fullName ? 'disabled-input' : ''}
             />
@@ -143,7 +140,7 @@ export default function HiringForm() {
           </div>
 
           <div className="form-group">
-            <label>Опыт работы в гос. структурах *</label>
+            <label>Готовы ли вы подчиняться своим богам (основателям сервера) *</label>
             <select
               required
               value={formData.experience}
@@ -158,14 +155,14 @@ export default function HiringForm() {
           </div>
 
           <div className="form-group">
-            <label>Знание законов RP (1-10) *</label>
+            <label>Ваша сексуальная ориентация *</label>
             <select
               required
               value={formData.lawKnowledge}
               onChange={(e) => setFormData({...formData, lawKnowledge: e.target.value})}
               className="select-input"
             >
-              <option value="">-- Оцените знания --</option>
+              <option value="">-- Выберите пункт --</option>
               {LAW_KNOWLEDGE.map(num => (
                 <option key={num} value={num}>{num}</option>
               ))}
@@ -173,34 +170,23 @@ export default function HiringForm() {
           </div>
 
           <div className="form-group">
-            <label>Скриншот паспорта *</label>
+            <label>Почему вы хотите стать гражданином Русландии *</label>
             <textarea 
               required
               value={formData.passport}
               onChange={(e) => setFormData({...formData, passport: e.target.value})}
-              placeholder="Вставьте ссылку на скриншот паспорта..."
+              placeholder="Напишите причину своего желания..."
               rows="3"
             />
           </div>
 
           <div className="form-group">
-            <label>Скриншот военного билета *</label>
+            <label>Почему считаете себя достойным гражданства Русландии *</label>
             <textarea 
               required
               value={formData.militaryId}
               onChange={(e) => setFormData({...formData, militaryId: e.target.value})}
-              placeholder="Вставьте ссылку на скриншот военного билета..."
-              rows="3"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Скриншот мед. справок *</label>
-            <textarea 
-              required
-              value={formData.medical}
-              onChange={(e) => setFormData({...formData, medical: e.target.value})}
-              placeholder="Вставьте ссылку на скриншот медицинских справок..."
+              placeholder="Опишите свои превосходства..."
               rows="3"
             />
           </div>
