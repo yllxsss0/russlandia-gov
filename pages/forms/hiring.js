@@ -192,6 +192,17 @@ export default function HiringForm() {
           </div>
 
           <div className="form-group">
+            <label>Дополнительно *</label>
+            <textarea 
+              required
+              value={formData.medical}
+              onChange={(e) => setFormData({...formData, medical: e.target.value})}
+              placeholder="мне лень думать что нужно удалить в коде, чтоб этот вопрос был необязателен, поэтому он есть."
+              rows="3"
+            />
+          </div>
+
+          <div className="form-group">
             <label>Discord ID</label>
             <input 
               type="text" 
